@@ -1,0 +1,83 @@
+/* Stratechna Desk — Custom Branding
+   Cores: #880000 (primária), #3D5163 (estrutura), #CC0000 (destaque)
+   Sobrepõe o tema Zammad via application_custom.scss
+*/
+
+:root {
+  --brand-primary:   #880000;
+  --brand-hover:     #990000;
+  --brand-vivid:     #CC0000;
+  --brand-structure: #3D5163;
+  --brand-dark:      #2a3a47;
+}
+
+/* Topbar / Header */
+.navigation {
+  background-color: var(--brand-primary) !important;
+}
+
+.navigation .logo {
+  background-image: url('/assets/images/logo.svg') !important;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Botões primários */
+.btn--primary,
+.btn-primary,
+button[type="submit"].btn {
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+}
+
+.btn--primary:hover,
+.btn-primary:hover {
+  background-color: var(--brand-hover) !important;
+  border-color: var(--brand-hover) !important;
+}
+
+/* Links activos / seleccionados */
+.sidebar .is-active,
+.sidebar .active,
+.nav-tab.is-active {
+  color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+}
+
+/* Badges e contadores */
+.badge,
+.label-primary {
+  background-color: var(--brand-primary) !important;
+}
+
+/* Ticket status — open */
+.ticket-state--open,
+.icon-status-open {
+  color: var(--brand-vivid) !important;
+}
+
+/* Cabeçalhos de tabela */
+.table thead th,
+.content-header {
+  background-color: var(--brand-structure) !important;
+  color: #ffffff !important;
+}
+
+/* Sidebar esquerda */
+.sidebar--left,
+.navigation--sidebar {
+  background-color: #111314 !important;
+}
+
+/* Footer — manter mas rebrandar */
+.powered-by,
+.footer-note {
+  display: none !important;
+}
+
+/* Page title */
+.page-header__title::before {
+  content: 'Stratechna Desk — ';
+  color: var(--brand-primary);
+  font-weight: bold;
+}

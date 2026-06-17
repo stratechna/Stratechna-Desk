@@ -1,0 +1,84 @@
+# Stratechna Desk — Template por cliente
+# Variáveis substituídas pelo novo-cliente.sh:
+#   ${CLIENTE}          — slug do cliente (ex: esferancora)
+#   ${DESK_EMAIL}       — email do admin inicial
+#   ${DESK_SECRET}      — secret key aleatório (gerado pelo script)
+#   ${EXTRA_HOSTS_RULE} — " || Host(`desk.dominio-cliente.pt`)" ou vazio
+
+services:
+
+  desk-${CLIENTE}-web:
+    image: ghcr.io/stratechna/stratechna-desk:latest
+    container_name: desk-${CLIENTE}-web
+    restart: unless-stopped
+    depends_on:
+      - desk-${CLIENTE}-db
+      - desk-${CLIENTE}-redis
+      - desk-${CLIENTE}-es
+    environment:
+      - DESK_SLUG=${CLIENTE}
+      - RAILS_ENV=production
+      - ZAMMAD_FQDN=${CLIENTE}.desk.stratechna.com
+      - ZAMMAD_SECRET_TOKEN=${DESK_SECRET}
+      - DATABASE_URL=postgresql://desk_${CLIENTE}:${DESK_DB_PASS}@desk-${CLIENTE}-db:5432/desk_${CLIENTE}
+      - REDIS_URL=redis://desk-${CLIENTE}-redis:6379
+      - ELASTICSEARCH_URL=http://desk-${CLIENTE}-es:9200
+      - MAIL_DELIVERY_METHOD=smtp
+      - SMTP_ADDRESS=smtp.zoho.eu
+      - SMTP_PORT=587
+      - SMTP_DOMAIN=stratechna.com
+    volumes:
+      - desk-${CLIENTE}-storage:/opt/zammad/storage
+    networks:
+      - traefik
+      - desk-${CLIENTE}-internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.desk-${CLIENTE}.rule=Host(`${CLIENTE}.desk.stratechna.com`)${EXTRA_HOSTS_RULE}"
+      - "traefik.http.routers.desk-${CLIENTE}.entrypoints=websecure"
+      - "traefik.http.routers.desk-${CLIENTE}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.desk-${CLIENTE}.loadbalancer.server.port=3000"
+
+  desk-${CLIENTE}-db:
+    image: postgres:15-alpine
+    container_name: desk-${CLIENTE}-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=desk_${CLIENTE}
+      - POSTGRES_USER=desk_${CLIENTE}
+      - POSTGRES_PASSWORD=${DESK_DB_PASS}
+    volumes:
+      - desk-${CLIENTE}-db:/var/lib/postgresql/data
+    networks:
+      - desk-${CLIENTE}-internal
+
+  desk-${CLIENTE}-redis:
+    image: redis:7-alpine
+    container_name: desk-${CLIENTE}-redis
+    restart: unless-stopped
+    networks:
+      - desk-${CLIENTE}-internal
+
+  desk-${CLIENTE}-es:
+    image: elasticsearch:8.13.0
+    container_name: desk-${CLIENTE}-es
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - desk-${CLIENTE}-es:/usr/share/elasticsearch/data
+    networks:
+      - desk-${CLIENTE}-internal
+
+volumes:
+  desk-${CLIENTE}-storage:
+  desk-${CLIENTE}-db:
+  desk-${CLIENTE}-es:
+
+networks:
+  traefik:
+    external: true
+  desk-${CLIENTE}-internal:
+    name: desk-${CLIENTE}-internal
