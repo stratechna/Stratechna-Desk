@@ -2,14 +2,8 @@ name: Build Stratechna Desk
 
 on:
   schedule:
-    # Segundas-feiras 07:00 UTC — após Docs (06:00) e Sign (05:00)
     - cron: '0 7 * * 1'
   workflow_dispatch:
-    inputs:
-      force_rebuild:
-        description: 'Forçar rebuild mesmo sem updates'
-        required: false
-        default: 'false'
 
 env:
   REGISTRY: ghcr.io
@@ -33,34 +27,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verificar versão Zammad upstream
-        id: upstream
-        run: |
-          LATEST=$(curl -s https://api.github.com/repos/zammad/zammad/releases/latest | jq -r .tag_name)
-          echo "zammad_version=${LATEST}" >> $GITHUB_OUTPUT
-          echo "Zammad upstream: ${LATEST}"
-
-      - name: Verificar se imagem já existe com esta versão
-        id: check
-        run: |
-          EXISTS=$(docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.upstream.outputs.zammad_version }} 2>/dev/null && echo "true" || echo "false")
-          echo "exists=${EXISTS}" >> $GITHUB_OUTPUT
-
       - name: Build e push imagem
-        if: steps.check.outputs.exists == 'false' || github.event.inputs.force_rebuild == 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.upstream.outputs.zammad_version }}
-          labels: |
-            org.opencontainers.image.version=${{ steps.upstream.outputs.zammad_version }}
-            org.opencontainers.image.created=${{ github.run_id }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-      - name: Notificar servidor (pull + restart instâncias)
-        if: steps.check.outputs.exists == 'false' || github.event.inputs.force_rebuild == 'true'
+      - name: Notificar servidor
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 95.217.8.239
