@@ -17,3 +17,4 @@ COPY --chmod=755 branding/rebrand.sh /docker-entrypoint.d/99-stratechna-rebrand.
 # Patch CSS — dimensões correctas para logotype e full-logo
 COPY branding/application.css /opt/zammad/public/assets/application-1777b10035b454d670de0d71eee6caefad1d06e4206d92faa3dfd486b5be4264.css
 COPY branding/svg-dimensions.css /opt/zammad/public/assets/svg-dimensions-9301635de4462b296da1f4ec32c0e4b6d7578e9a49bbe5eb387b57d317bdea6c.css
+COPY branding/favicon.ico /opt/zammad/public/favicon.ico
