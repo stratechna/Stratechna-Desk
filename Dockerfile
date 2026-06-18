@@ -19,3 +19,4 @@ COPY branding/application.css /opt/zammad/public/assets/application-1777b10035b4
 COPY branding/svg-dimensions.css /opt/zammad/public/assets/svg-dimensions-9301635de4462b296da1f4ec32c0e4b6d7578e9a49bbe5eb387b57d317bdea6c.css
 COPY branding/favicon.ico /opt/zammad/public/favicon.ico
 COPY branding/application.js /opt/zammad/public/assets/application-710831abbe58cd003d1da50e6d8133e60a2c7e9556d89fc3c30bd0d86dda39e4.js
+COPY branding/application.js /opt/zammad/public/assets/application-710831abbe58cd003d1da50e6d8133e60a2c7e9556d89fc3c30bd0d86dda39e4.js
