@@ -21,7 +21,7 @@ COPY --chmod=755 branding/rebrand.sh /docker-entrypoint.d/99-stratechna-rebrand.
 
 
 # Patch icons.svg em bash puro — instalar python3 e fazer patch
-RUN apt-get update -qq && apt-get install -y --no-install-recommends python3 && \
+RUN mkdir -p /var/lib/apt/lists/partial && apt-get update && apt-get install -y --no-install-recommends python3 && \
     python3 /tmp/patch-icons.py && \
     rm /tmp/patch-icons.py && \
     apt-get remove -y python3 && apt-get autoremove -y && \
