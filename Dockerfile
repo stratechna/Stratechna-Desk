@@ -15,3 +15,7 @@ COPY branding/stratechna.css   /opt/zammad/app/assets/stylesheets/application_cu
 # Patch de nome da app (substitui "Zammad" por "Stratechna Desk" nos strings JS compilados)
 # Feito em runtime via entrypoint para não depender de rebuild do assets pipeline
 COPY --chmod=755 branding/rebrand.sh /docker-entrypoint.d/99-stratechna-rebrand.sh
+
+# Patch icons.svg — substituir full-logo e logotype pelo logo Stratechna
+COPY branding/patch-icons.py /tmp/patch-icons.py
+RUN python3 /tmp/patch-icons.py && rm /tmp/patch-icons.py
