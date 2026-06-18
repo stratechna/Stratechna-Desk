@@ -17,5 +17,12 @@ COPY branding/stratechna.css   /opt/zammad/app/assets/stylesheets/application_cu
 COPY --chmod=755 branding/rebrand.sh /docker-entrypoint.d/99-stratechna-rebrand.sh
 
 # Patch icons.svg — substituir full-logo e logotype pelo logo Stratechna
-COPY branding/patch-icons.py /tmp/patch-icons.py
-RUN python3 /tmp/patch-icons.py && rm /tmp/patch-icons.py
+
+
+
+# Patch icons.svg em bash puro — instalar python3 e fazer patch
+RUN apt-get update -qq && apt-get install -y --no-install-recommends python3 && \
+    python3 /tmp/patch-icons.py && \
+    rm /tmp/patch-icons.py && \
+    apt-get remove -y python3 && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
