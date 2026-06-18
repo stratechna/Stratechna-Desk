@@ -26,3 +26,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends python3 && 
     rm /tmp/patch-icons.py && \
     apt-get remove -y python3 && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
+
+# Injectar script para ocultar referências Zammad
+COPY branding/hide_zammad_popup.js /opt/zammad/public/assets/hide_zammad_popup.js
+COPY branding/index.html.erb       /opt/zammad/app/views/init/index.html.erb
