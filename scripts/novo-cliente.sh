@@ -1,5 +1,5 @@
 #!/bin/bash
-# /opt/stratechna/desk/scripts/novo-cliente.sh
+# /mnt/HC_Volume_105350964/stratechna/desk/scripts/novo-cliente.sh
 # Uso: bash novo-cliente.sh <slug> <email-admin> [empresa] [dominio-proprio]
 #
 # Exemplos:
@@ -13,11 +13,11 @@ EMAIL="$2"
 EMPRESA="${3:-$SLUG}"
 DOMINIO_PROPRIO="$4"
 
-TEMPLATE_DIR="/opt/stratechna/desk/template"
-CLIENTES_DIR="/opt/stratechna/desk/clientes"
+TEMPLATE_DIR="/mnt/HC_Volume_105350964/stratechna/desk/template"
+CLIENTES_DIR="/mnt/HC_Volume_105350964/stratechna/desk/clientes"
 INSTANCE_DIR="${CLIENTES_DIR}/${SLUG}"
-SCRIPTS_DIR="/opt/stratechna/desk/scripts"
-LOGO_SVG="/opt/stratechna/desk/branding/logo.svg"
+SCRIPTS_DIR="/mnt/HC_Volume_105350964/stratechna/desk/scripts"
+LOGO_SVG="/mnt/HC_Volume_105350964/stratechna/desk/branding/logo.svg"
 
 # ── Validação ──────────────────────────────────────────────────────────────────
 if [ -z "$SLUG" ] || [ -z "$EMAIL" ]; then
@@ -252,18 +252,15 @@ done
 # ── Configuração inicial via Rails ────────────────────────────────────────────
 echo "▶ A configurar branding..."
 
-# Logo em base64
-if [ -f "$LOGO_SVG" ]; then
-  B64=$(base64 -w 0 "$LOGO_SVG")
-  cat > /tmp/desk_setup_${SLUG}.rb << RUBY
+# Configuração via Rails
+cat > /tmp/desk_setup_${SLUG}.rb << 'RUBY'
 Setting.set('product_name', 'Stratechna Desk')
-Setting.set('product_logo', 'data:image/svg+xml;base64,${B64}')
-puts 'branding ok'
+Setting.set('user_create_account', false)
+puts 'config ok'
 RUBY
-  docker cp /tmp/desk_setup_${SLUG}.rb desk-${SLUG}-railsserver:/tmp/desk_setup.rb
-  docker exec desk-${SLUG}-railsserver bundle exec rails r /tmp/desk_setup.rb 2>/dev/null | grep -v "^I,\|^W," || true
-  rm /tmp/desk_setup_${SLUG}.rb
-fi
+docker cp /tmp/desk_setup_${SLUG}.rb desk-${SLUG}-railsserver:/tmp/desk_setup.rb
+docker exec desk-${SLUG}-railsserver bundle exec rails r /tmp/desk_setup.rb 2>/dev/null | grep -v "^I,\|^W," || true
+rm /tmp/desk_setup_${SLUG}.rb
 
 # ── Guardar sumário ───────────────────────────────────────────────────────────
 cat > "${INSTANCE_DIR}/INFO.txt" << INFO
@@ -279,5 +276,6 @@ INFO
 echo ""
 echo "✅ Stratechna Desk — instância '${SLUG}' criada!"
 echo "   URL: https://${SLUG}.desk.stratechna.com"
-echo "   Completa o setup em: https://${SLUG}.desk.stratechna.com/#getting_started"
+echo "   ⚠ Completa o setup em: https://${SLUG}.desk.stratechna.com/#getting_started"
+echo "   ⚠ Faz upload do logo em: https://${SLUG}.desk.stratechna.com/#system/branding"
 echo "   Info: ${INSTANCE_DIR}/INFO.txt"
