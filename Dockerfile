@@ -19,3 +19,4 @@ COPY branding/svg-dimensions.css /opt/zammad/public/assets/svg-dimensions-930163
 
 # Patch JS — substituir zammad.org por stratechna.com
 COPY branding/application.js /opt/zammad/public/assets/application-710831abbe58cd003d1da50e6d8133e60a2c7e9556d89fc3c30bd0d86dda39e4.js
+COPY branding/application-1e878107.js /opt/zammad/public/assets/application-1e878107bf2deb340eb8507e3cdb7b44c226ad4b138b08fefc2d33f3bc2b8195.js
