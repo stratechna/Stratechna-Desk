@@ -11,8 +11,6 @@ COPY branding/favicon.png          /opt/zammad/public/favicon.png
 COPY branding/favicon.ico          /opt/zammad/public/favicon.ico
 COPY branding/stratechna.css       /opt/zammad/app/assets/stylesheets/application_custom.scss
 COPY branding/icons.svg            /opt/zammad/public/assets/images/icons.svg
-COPY branding/hide_zammad_popup.js /opt/zammad/public/assets/hide_zammad_popup.js
-COPY branding/index.html.erb       /opt/zammad/app/views/init/index.html.erb
 COPY --chmod=755 branding/rebrand.sh /docker-entrypoint.d/99-stratechna-rebrand.sh
 
 # Patch CSS — dimensões correctas para logotype e full-logo
